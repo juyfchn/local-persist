@@ -10,7 +10,7 @@ VERSION="v1.3.0"
 # FreeBSD: FreeBSD amd64
 
 if [[ "$UID" != 0 ]]; then
-    echo NOTE: sudo needed to set up and run start service
+    echo NOTE: needed to set up and run start service
     exit 1
 fi
 
@@ -51,9 +51,9 @@ function install-binary {
     echo Stopping docker-volume-local-persist service if running
     echo ''
     if [[ $* == *--upstart* ]]; then
-        (sudo service docker-volume-local-persist stop || true)
+        (service docker-volume-local-persist stop || true)
     else
-        (sudo systemctl stop docker-volume-local-persist || true)
+        (systemctl stop docker-volume-local-persist || true)
     fi
 
     BINARY_URL="https://github.com/CWSpear/local-persist/releases/download/${VERSION}/local-persist-${OS}-${ARCH}"
@@ -79,7 +79,7 @@ function setup-systemd {
     echo "  From: $SYSTEMD_CONFIG_URL"
     echo "  To:   $SYSTEMD_CONFIG_DEST"
 
-    sudo curl -fLsS "$SYSTEMD_CONFIG_URL" > $SYSTEMD_CONFIG_DEST
+    curl -fLsS "$SYSTEMD_CONFIG_URL" > $SYSTEMD_CONFIG_DEST
 
     echo Systemd conf downloaded
     echo ''
@@ -88,10 +88,10 @@ function setup-systemd {
 function start-systemd {
     echo Starting docker-volume-local-persist service...
 
-    sudo systemctl daemon-reload
-    sudo systemctl enable docker-volume-local-persist
-    sudo systemctl start docker-volume-local-persist
-    sudo systemctl status --full --no-pager docker-volume-local-persist
+    systemctl daemon-reload
+    systemctl enable docker-volume-local-persist
+    systemctl start docker-volume-local-persist
+    systemctl status --full --no-pager docker-volume-local-persist
 
     echo ''
     echo Done! If you see this message, that should mean everything is installed and is running.
@@ -106,7 +106,7 @@ function setup-upstart {
     echo "  From: $UPSTART_CONFIG_URL"
     echo "  To:   $UPSTART_CONFIG_DEST"
 
-    sudo curl -fLsS "$UPSTART_CONFIG_URL" > $UPSTART_CONFIG_DEST
+    curl -fLsS "$UPSTART_CONFIG_URL" > $UPSTART_CONFIG_DEST
 
     echo Upstart conf downloaded
     echo ''
@@ -115,9 +115,9 @@ function setup-upstart {
 function start-upstart {
     echo Reloading Upstart config and starting docker-volume-local-persist service...
 
-    sudo initctl reload-configuration
-    sudo service docker-volume-local-persist start
-    sudo service docker-volume-local-persist status
+    initctl reload-configuration
+    service docker-volume-local-persist start
+    service docker-volume-local-persist status
 
     echo ''
     echo Done! If you see this message, that should mean everything is installed and is running.
